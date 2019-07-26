@@ -3,6 +3,7 @@ import $ from 'jquery'
 import InputCustomizado from './componentes/InputCustomizado'
 import SubmitForm from './componentes/SubmitForm'
 import PubSub from 'pubsub-js'
+import TratadorErros from './TratadorErros';
 
 class FormAutor extends Component {
 
@@ -29,12 +30,18 @@ class FormAutor extends Component {
             dataType: 'json',
             type: 'post',
             data: JSON.stringify({ nome: this.state.nome, email: this.state.email, senha: this.state.senha }),
+            beforeSend: function() {
+                PubSub.publish("limpa-erros",{});
+            },   
             success: function (result) {
                 //Dispara evento para atualização da grid
-                PubSub.publish('updateGridAutor',result);
-            },
+                PubSub.publish('updateGridAutor', result);
+                this.setState({nome:'',email:'',senha:''});
+            }.bind(this),
             error: function (result) {
-                console.log("erro");
+                if (result.status == 400) {
+                    new TratadorErros().publicaErros(result.responseJSON);
+                }
             }
         });
     }
@@ -105,8 +112,8 @@ export default class AutorBox extends Component {
         });
 
         //Listener para o event de atualização da grid
-        PubSub.subscribe('updateGridAutor', function(topico, result){
-            this.setState({dataSource: result})
+        PubSub.subscribe('updateGridAutor', function (topico, result) {
+            this.setState({ dataSource: result })
         }.bind(this));
     }
 
@@ -114,7 +121,7 @@ export default class AutorBox extends Component {
         return (
             <div>
                 <FormAutor></FormAutor>
-                <GridAutores dataSource = {this.state.dataSource}></GridAutores>
+                <GridAutores dataSource={this.state.dataSource}></GridAutores>
             </div>
         );
     }
