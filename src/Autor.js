@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import $ from 'jquery'
 import InputCustomizado from './componentes/InputCustomizado'
 import SubmitForm from './componentes/SubmitForm'
+import PubSub from 'pubsub-js'
 
 class FormAutor extends Component {
 
@@ -29,8 +30,9 @@ class FormAutor extends Component {
             type: 'post',
             data: JSON.stringify({ nome: this.state.nome, email: this.state.email, senha: this.state.senha }),
             success: function (result) {
-                this.props.onSuccess(result);
-            }.bind(this),
+                //Dispara evento para atualização da grid
+                PubSub.publish('updateGridAutor',result);
+            },
             error: function (result) {
                 console.log("erro");
             }
@@ -91,7 +93,6 @@ export default class AutorBox extends Component {
     constructor() {
         super();
         this.state = { dataSource: [] };
-        this.onSuccess = this.onSuccess.bind(this);
     }
 
     componentDidMount() {
@@ -102,16 +103,17 @@ export default class AutorBox extends Component {
                 this.setState({ dataSource: result });
             }.bind(this) //bind o 'this' do react -> informa que o 'this' é do react e não do jquery
         });
-    }
 
-    onSuccess(dataSource) {
-        this.setState({dataSource: dataSource})
+        //Listener para o event de atualização da grid
+        PubSub.subscribe('updateGridAutor', function(topico, result){
+            this.setState({dataSource: result})
+        }.bind(this));
     }
 
     render() {
         return (
             <div>
-                <FormAutor onSuccess= {this.onSuccess}></FormAutor>
+                <FormAutor></FormAutor>
                 <GridAutores dataSource = {this.state.dataSource}></GridAutores>
             </div>
         );
