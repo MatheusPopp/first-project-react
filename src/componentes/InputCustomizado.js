@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
 class InputCustomizado extends Component {
-
-
     render() {
         return (
             <div className="pure-control-group">
