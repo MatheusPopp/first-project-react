@@ -4,6 +4,7 @@ import InputCustomizado from './componentes/InputCustomizado'
 import SubmitForm from './componentes/SubmitForm'
 import PubSub from 'pubsub-js'
 import TratadorErros from './TratadorErros';
+import { Link } from 'react-router-dom'
 
 class FormAutor extends Component {
 
@@ -120,9 +121,14 @@ export default class AutorBox extends Component {
     render() {
         return (
             <div>
-                <FormAutor></FormAutor>
-                <GridAutores dataSource={this.state.dataSource}></GridAutores>
-            </div>
+                <div className="header">
+                    <h1>Cadastro de Autores</h1>
+                </div>
+                <div className="content" id="content">
+                        <FormAutor></FormAutor>
+                        <GridAutores dataSource={this.state.dataSource}></GridAutores>
+                </div>   
+            </div>    
         );
     }
 }
