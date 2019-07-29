@@ -12,16 +12,15 @@ class FormAutor extends Component {
         super();
         this.state = { nome: '', email: '', senha: '' }
         this.enviaForm = this.enviaForm.bind(this);
-        this.setNome = this.setNome.bind(this);
-        this.setEmail = this.setEmail.bind(this);
-        this.setSenha = this.setSenha.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
-    setNome(evento) { this.setState({ nome: evento.target.value }); }
+    handleChange(e){
+        let change = {};
+        change[e.target.name] = e.target.value;
+        this.setState(change);
+    }
 
-    setEmail(evento) { this.setState({ email: evento.target.value }); }
-
-    setSenha(evento) { this.setState({ senha: evento.target.value }); }
 
     enviaForm(evento) {
         evento.preventDefault();
@@ -51,9 +50,9 @@ class FormAutor extends Component {
         return (
             <div className="pure-form pure-form-aligned">
                 <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="POST">
-                    <InputCustomizado id="nome" type="text" name="nome" value={this.state.nome} onChange={this.setNome} label="Nome" htmlFor="nome" />
-                    <InputCustomizado id="email" type="email" name="email" value={this.state.email} onChange={this.setEmail} label="Email" htmlFor="email" />
-                    <InputCustomizado id="senha" type="password" name="senha" value={this.state.senha} onChange={this.setSenha} label="Senha" htmlFor="senha" />
+                    <InputCustomizado id="nome" type="text" name="nome" value={this.state.nome} onChange={this.handleChange} label="Nome" htmlFor="nome" />
+                    <InputCustomizado id="email" type="email" name="email" value={this.state.email} onChange={this.handleChange} label="Email" htmlFor="email" />
+                    <InputCustomizado id="senha" type="password" name="senha" value={this.state.senha} onChange={this.handleChange} label="Senha" htmlFor="senha" />
                     <SubmitForm buttonName="Gravar" />
                 </form>
             </div>

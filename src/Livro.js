@@ -10,19 +10,17 @@ class FormLivro extends Component {
 
     constructor() {
         super();
-        this.state = { titulo: '', preco: '', autor: '' }
+        this.state = { titulo: '', preco: '', autorId: '' }
 
         this.enviaForm = this.enviaForm.bind(this);
-        this.setTitulo = this.setTitulo.bind(this);
-        this.setPreco = this.setPreco.bind(this);
-        this.setAutor = this.setAutor.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
-    setTitulo(evento) { this.setState({ titulo: evento.target.value }); }
-
-    setPreco(evento) { this.setState({ preco: evento.target.value }); }
-
-    setAutor(evento) { this.setState({ autor: evento.target.value }); }
+    handleChange(e){
+        let change = {};
+        change[e.target.name] = e.target.value;
+        this.setState(change);
+    }
 
     enviaForm(evento) {
         evento.preventDefault();
@@ -31,14 +29,14 @@ class FormLivro extends Component {
             contentType: 'application/json',
             dataType: 'json',
             type: 'post',
-            data: JSON.stringify({ titulo: this.state.titulo, preco: this.state.preco, autorId: this.state.autor }),
+            data: JSON.stringify({ titulo: this.state.titulo, preco: this.state.preco, autorId: this.state.autorId }),
             beforeSend: function () {
                 PubSub.publish("limpa-erros", {});
             },
             success: function (result) {
                 //Dispara evento para atualização da grid
                 PubSub.publish('updateGridLivro', result);
-                this.setState({ titulo: '', preco: '', autor: '' });
+                this.setState({ titulo: '', preco: '', autorId: '' });
             }.bind(this),
             error: function (result) {
                 if (result.status == 400) {
@@ -53,11 +51,11 @@ class FormLivro extends Component {
         return (
             <div className="pure-form pure-form-aligned">
                 <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm} method="POST">
-                    <InputCustomizado id="nome" type="text" name="titulo" value={this.state.titulo} onChange={this.setTitulo} label="Titulo" htmlFor="titulo" />
-                    <InputCustomizado id="preco" type="number" name="preco" value={this.state.preco} onChange={this.setPreco} label="Preco" htmlFor="preco" />
+                    <InputCustomizado id="nome" type="text" name="titulo" value={this.state.titulo} onChange={this.handleChange} label="Titulo" htmlFor="titulo" />
+                    <InputCustomizado id="preco" type="number" name="preco" value={this.state.preco} onChange={this.handleChange} label="Preco" htmlFor="preco" />
                     <div className="pure-control-group">
                         <label htmlFor="autorId">Autor</label>
-                        <select value={this.state.autor} name="autorId" id="autorId" onChange={this.setAutor}>
+                        <select value={this.state.autorId} name="autorId" id="autorId" onChange={this.handleChange}>
                             <option value="">Selecione autor</option>
                             {
                                 this.props.autores.map(autor => {
